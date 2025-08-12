@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -31,7 +31,7 @@ interface Message {
   replies?: Message[]
 }
 
-export default function ClientMessagesPage() {
+function ClientMessagesContent() {
   const searchParams = useSearchParams()
   const projectFilter = searchParams.get("project")
   
@@ -286,5 +286,21 @@ export default function ClientMessagesPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ClientMessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <DashboardHeader title="Messages" breadcrumbs={[{ label: "Client", href: "/dashboard/client" }]} />
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ClientMessagesContent />
+    </Suspense>
   )
 }
